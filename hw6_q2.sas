@@ -27,7 +27,16 @@ proc gplot; plot res*pred;
 proc univariate noprint normal;
 qqplot res/normal (L=1 mu=est sigma=est);
 histogram res/normal (L=1 mu=est sigma=est) kernel(L=2 K=quadratic);
-proc gplot; plot res*pred;
-
+proc gplot; plot res*pred; 
 symbol1 v=circle i=joint;
-proc gplot data=diag; plot y*soap=stain; run; quit;
+
+proc gplot; plot res*trt; 
+symbol1 v=circle i=none;
+
+proc gplot; plot res*operator; 
+symbol1 v=circle i=none;
+
+proc gplot; plot res*order; 
+symbol1 v=circle i=none;
+
+proc gplot data=diag; plot resp*trt=operator; run; quit;
