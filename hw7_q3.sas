@@ -52,7 +52,7 @@ proc gplot;
 plot mn*glasstype=temp;
 run;quit;
 
-/* q3-f = bonferroni */
+/* q3-e = bonferroni */
 
 proc glm data=gaugerr;
 	class glasstype temp;
@@ -61,7 +61,7 @@ proc glm data=gaugerr;
 	lsmeans glasstype|temp/tdiff adjust=bonferroni;
 	run;quit;
 
-/* q3-g = tukey */
+/* q3-f = tukey */
 
 proc glm data=gaugerr;
 	class glasstype temp;
@@ -69,3 +69,25 @@ proc glm data=gaugerr;
 	means glasstype|temp /tukey lines;
 	lsmeans glasstype|temp/tdiff adjust=tukey;
 	run;quit;
+
+/* q3-g = something stupid */ 
+
+data life;
+input mat temp y @@;
+if mat=1 then x1=1;
+if mat=1 then x2=0;
+if mat=2 then x1=0;
+if mat=2 then x2=1;
+if mat=3 then x1=-1;
+if mat=3 then x2=-1;
+t=(temp-125)/25;
+t2=t*t; x1t=x1*t; x2t=x2*t;
+x1t2=x1*t2; x2t2=x2*t2;
+datalines;
+1 100 58 1 100 56.8 1 100 57 1 125 107 1 125 106.7 1 125 106.5 1 150 129.2 1 150 128.0 1 150 128.6
+2 100 55 2 100 53 2 100 57.9 2 125 107 2 125 103.5 2 125 105 2 150 117.8 2 150 116.2 2 150 109.9
+3 100 54.6 3 100 57.5 3 100 59.9 3 125 106.5 3 125 107.3 3 125 108.6 3 150 101.7 3 150 105.4 3 150 103.9 
+;
+proc reg;
+model y=x1 x2 t x1t x2t t2 x1t2 x2t2;
+run; quit;
