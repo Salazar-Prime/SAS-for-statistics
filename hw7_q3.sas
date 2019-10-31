@@ -17,7 +17,7 @@ proc glm;
 	output out=batnew r=res p=pred;
 	run; quit;
 
-/* q2-c = asumption test */
+/* q3-c = asumption test */
 proc univariate noprint normal;
 qqplot res/normal (L=1 mu=est sigma=est);
 histogram res/normal (L=1 mu=est sigma=est) kernel(L=2 K=quadratic);
@@ -34,3 +34,38 @@ proc gplot; plot res*resp;
 symbol1 v=circle i=none;
 
 run; quit;
+
+/* q3-d = interaction plot */
+
+proc means noprint;
+var resp;
+by glasstype temp;
+output out=batterymean mean=mn;
+symbol1 v=circle i=join;
+symbol2 v=square i=join;
+symbol3 v=triangle i=join;
+proc gplot;
+plot mn*temp=glasstype;
+run;quit;
+
+proc gplot;
+plot mn*glasstype=temp;
+run;quit;
+
+/* q3-f = bonferroni */
+
+proc glm data=gaugerr;
+	class glasstype temp;
+	model resp=glasstype temp glasstype*temp;
+	means glasstype|temp /bonferroni lines;
+	lsmeans glasstype|temp/tdiff adjust=bonferroni;
+	run;quit;
+
+/* q3-g = tukey */
+
+proc glm data=gaugerr;
+	class glasstype temp;
+	model resp=glasstype temp glasstype*temp;
+	means glasstype|temp /tukey lines;
+	lsmeans glasstype|temp/tdiff adjust=tukey;
+	run;quit;
